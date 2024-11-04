@@ -1,0 +1,244 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.16.4
+  name: simpledemoes.apps.demo.com
+spec:
+  group: apps.demo.com
+  names:
+    kind: SimpleDemo
+    listKind: SimpleDemoList
+    plural: simpledemoes
+    singular: simpledemo
+  scope: Namespaced
+  versions:
+  - name: v1
+    schema:
+      openAPIV3Schema:
+        description: SimpleDemo is the Schema for the simpledemoes API.
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: SimpleDemoSpec defines the desired state of SimpleDemo.
+            properties:
+              args:
+                description: Args 启动命令参数
+                items:
+                  type: string
+                type: array
+              environments:
+                description: Environments 环境变量 直接使用 pod 中的定义方式
+                items:
+                  description: EnvVar represents an environment variable present in
+                    a Container.
+                  properties:
+                    name:
+                      description: Name of the environment variable. Must be a C_IDENTIFIER.
+                      type: string
+                    value:
+                      description: |-
+                        Variable references $(VAR_NAME) are expanded
+                        using the previously defined environment variables in the container and
+                        any service environment variables. If a variable cannot be resolved,
+                        the reference in the input string will be unchanged. Double $$ are reduced
+                        to a single $, which allows for escaping the $(VAR_NAME) syntax: i.e.
+                        "$$(VAR_NAME)" will produce the string literal "$(VAR_NAME)".
+                        Escaped references will never be expanded, regardless of whether the variable
+                        exists or not.
+                        Defaults to "".
+                      type: string
+                    valueFrom:
+                      description: Source for the environment variable's value. Cannot
+                        be used if value is not empty.
+                      properties:
+                        configMapKeyRef:
+                          description: Selects a key of a ConfigMap.
+                          properties:
+                            key:
+                              description: The key to select.
+                              type: string
+                            name:
+                              default: ""
+                              description: |-
+                                Name of the referent.
+                                This field is effectively required, but due to backwards compatibility is
+                                allowed to be empty. Instances of this type with an empty value here are
+                                almost certainly wrong.
+                                More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                              type: string
+                            optional:
+                              description: Specify whether the ConfigMap or its key
+                                must be defined
+                              type: boolean
+                          required:
+                          - key
+                          type: object
+                          x-kubernetes-map-type: atomic
+                        fieldRef:
+                          description: |-
+                            Selects a field of the pod: supports metadata.name, metadata.namespace, `metadata.labels['<KEY>']`, `metadata.annotations['<KEY>']`,
+                            spec.nodeName, spec.serviceAccountName, status.hostIP, status.podIP, status.podIPs.
+                          properties:
+                            apiVersion:
+                              description: Version of the schema the FieldPath is
+                                written in terms of, defaults to "v1".
+                              type: string
+                            fieldPath:
+                              description: Path of the field to select in the specified
+                                API version.
+                              type: string
+                          required:
+                          - fieldPath
+                          type: object
+                          x-kubernetes-map-type: atomic
+                        resourceFieldRef:
+                          description: |-
+                            Selects a resource of the container: only resources limits and requests
+                            (limits.cpu, limits.memory, limits.ephemeral-storage, requests.cpu, requests.memory and requests.ephemeral-storage) are currently supported.
+                          properties:
+                            containerName:
+                              description: 'Container name: required for volumes,
+                                optional for env vars'
+                              type: string
+                            divisor:
+                              anyOf:
+                              - type: integer
+                              - type: string
+                              description: Specifies the output format of the exposed
+                                resources, defaults to "1"
+                              pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                              x-kubernetes-int-or-string: true
+                            resource:
+                              description: 'Required: resource to select'
+                              type: string
+                          required:
+                          - resource
+                          type: object
+                          x-kubernetes-map-type: atomic
+                        secretKeyRef:
+                          description: Selects a key of a secret in the pod's namespace
+                          properties:
+                            key:
+                              description: The key of the secret to select from.  Must
+                                be a valid secret key.
+                              type: string
+                            name:
+                              default: ""
+                              description: |-
+                                Name of the referent.
+                                This field is effectively required, but due to backwards compatibility is
+                                allowed to be empty. Instances of this type with an empty value here are
+                                almost certainly wrong.
+                                More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                              type: string
+                            optional:
+                              description: Specify whether the Secret or its key must
+                                be defined
+                              type: boolean
+                          required:
+                          - key
+                          type: object
+                          x-kubernetes-map-type: atomic
+                      type: object
+                  required:
+                  - name
+                  type: object
+                type: array
+              expose:
+                description: Expose service 要暴露的端口
+                properties:
+                  ingressDomain:
+                    description: IngressDomain 域名 在 Mode 为 ingress 时 必填
+                    type: string
+                  mode:
+                    description: Mode 模式 nodePort or ingress
+                    type: string
+                  nodePort:
+                    description: NodePort nodePort 端口 在 Mode 为 nodePort 时 必填
+                    format: int32
+                    type: integer
+                  servicePort:
+                    description: ServicePort service 端口 一般随机生成 这里使用和服务相同的端口 Port
+                    format: int32
+                    type: integer
+                required:
+                - mode
+                type: object
+              image:
+                description: Image 镜像地址
+                type: string
+              port:
+                description: Port 服务提供的端口
+                format: int32
+                type: integer
+              replicas:
+                description: Replicas 要部署多少个副本
+                format: int32
+                type: integer
+              startCmd:
+                description: StartCmd 启动命令
+                type: string
+            required:
+            - expose
+            - image
+            - port
+            type: object
+          status:
+            description: SimpleDemoStatus defines the observed state of SimpleDemo.
+            properties:
+              conditions:
+                description: Conditions 处于这个阶段的原因
+                items:
+                  description: Condition defines the observed state of Condition.
+                  properties:
+                    lastTransitionTime:
+                      description: LastTransitionTime 最后 创建/更新 时间
+                      format: date-time
+                      type: string
+                    message:
+                      description: Message 子资源状态信息
+                      type: string
+                    reason:
+                      description: Reason 子资源状态原因
+                      type: string
+                    status:
+                      description: Status 子资源状态名称
+                      type: string
+                    type:
+                      description: Type 子资源类型
+                      type: string
+                  type: object
+                type: array
+              message:
+                description: Message 这个阶段信息
+                type: string
+              phase:
+                description: Phase 处于什么阶段
+                type: string
+              reason:
+                description: Reason 处于这个阶段的原因
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

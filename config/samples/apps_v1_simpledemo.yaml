@@ -1,0 +1,9 @@
+apiVersion: apps.demo.com/v1
+kind: SimpleDemo
+metadata:
+  labels:
+    app.kubernetes.io/name: simple
+    app.kubernetes.io/managed-by: kustomize
+  name: simpledemo-sample
+spec:
+  # TODO(user): Add fields here

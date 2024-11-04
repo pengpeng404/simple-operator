@@ -1,0 +1,11 @@
+apiVersion: apps.demo.com/v1
+kind: SimpleDemo
+metadata:
+  name: simpledemo-test-node
+spec:
+  image: nginx
+  port: 80
+  replicas: 2
+  expose:
+    mode: nodeport
+    nodePort: 30002

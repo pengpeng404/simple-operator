@@ -1,0 +1,11 @@
+apiVersion: apps.demo.com/v1
+kind: SimpleDemo
+metadata:
+  name: simpledemo-test-ingress
+spec:
+  image: nginx
+  port: 80
+  replicas: 1
+  expose:
+    mode: ingress
+    ingressDomain: www.pp-test.com
